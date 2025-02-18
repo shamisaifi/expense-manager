@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "../config"
+
 
 const Transactions = () => {
     const [transactions, setTransactions] = useState([]);
@@ -14,7 +16,7 @@ const Transactions = () => {
 
     const fetchTransactions = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/transaction/allTransactions?query=${searchQuery}`);
+            const response = await axios.get(`${API_URL}/transaction/allTransactions?query=${searchQuery}`);
             setTransactions(response.data.transactions);
         } catch (error) {
             console.error("Error fetching transactions:", error);
@@ -39,7 +41,7 @@ const Transactions = () => {
 
     const handleUpdate = async () => {
         try {
-            await axios.put(`http://localhost:5000/transaction/edit-expense?id=${selectedTransaction._id}`, formData);
+            await axios.put(`${API_URL}/transaction/edit-expense?id=${selectedTransaction._id}`, formData);
             alert("Transaction updated successfully!");
             fetchTransactions();
             setSelectedTransaction(null);
@@ -51,7 +53,7 @@ const Transactions = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/transaction/delete-expense/?id=${id}`);
+            await axios.delete(`${API_URL}/transaction/delete-expense/?id=${id}`);
             alert("Transaction deleted successfully!");
             fetchTransactions();
         } catch (error) {

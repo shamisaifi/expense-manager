@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts"
 import { Calendar, DollarSign, Wallet } from "lucide-react"
+import { API_URL } from "../config"
 
 const Dashboard = () => {
     const [transactions, setTransactions] = useState([])
@@ -11,14 +12,14 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchDashboardData()
-    }, []) 
+    }, [])
 
     const fetchDashboardData = async () => {
         setLoading(true)
         try {
             const [transactionRes, budgetRes] = await Promise.all([
-                axios.get("http://localhost:5000/transaction/allTransactions"),
-                axios.get(`http://localhost:5000/budget/getBudget/${month}`),
+                axios.get(`${API_URL}/transaction/allTransactions`),
+                axios.get(`${API_URL}/budget/getBudget/${month}`),
             ])
 
             setTransactions(transactionRes.data.transactions)

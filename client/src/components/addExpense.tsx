@@ -3,6 +3,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { API_URL } from "../config";
 
 const categories = ["Food", "Rent", "Shopping", "Transportation", "Entertainment", "Savings", "Others"];
 
@@ -29,9 +30,9 @@ const AddExpense = () => {
     const onSubmit = async (data: any) => {
         try {
             setLoading(true);
-            await axios.post("http://localhost:5000/transaction/addExpense", data);
+            await axios.post(`${API_URL}/transaction/addExpense`, data);
             setMessage("Expense added successfully!");
-            reset(); 
+            reset();
         } catch (error) {
             setMessage("Error adding expense.");
             console.error("Error:", error);

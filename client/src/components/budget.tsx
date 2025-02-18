@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { API_URL } from "../config";
 
 const categories = ["Food", "Rent", "Shopping", "Transportation", "Entertainment", "Savings", "Others"];
 
@@ -32,7 +33,7 @@ const Budget = () => {
 
         setLoading(true);
         try {
-            const response = await axios.post("http://localhost:5000/budget/setBudget", { month, budgets });
+            const response = await axios.post(`${API_URL}/budget/setBudget`, { month, budgets });
             setMessage(response.data.message);
         } catch (error) {
             setMessage("Error setting budget.");
