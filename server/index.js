@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: "*"
+    origin: "https://expense-manager-azfk.vercel.app/"
 }));
 
 const PORT = process.env.PORT || 8000;
