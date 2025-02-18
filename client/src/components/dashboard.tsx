@@ -4,22 +4,38 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 import { Calendar, DollarSign, Wallet } from "lucide-react"
 import { API_URL } from "../config"
 
+interface Transaction {
+    date: string
+    category: string
+    description: string
+    amount: number
+}
+
+interface BudgetItem {
+    category: string
+    amount: number
+}
+
+interface Budget {
+    budgets: BudgetItem[]
+}
+
 const Dashboard = () => {
-    const [transactions, setTransactions] = useState([])
-    const [budget, setBudget] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [month, setMonth] = useState(new Date().toISOString().slice(0, 7))
+    const [transactions, setTransactions] = useState<Transaction[]>([])
+    const [budget, setBudget] = useState<Budget | null>(null)
+    const [loading, setLoading] = useState<boolean>(true)
+    const [month, setMonth] = useState<string>(new Date().toISOString().slice(0, 7))
 
     useEffect(() => {
         fetchDashboardData()
-    }, [])
+    }, [month])
 
     const fetchDashboardData = async () => {
         setLoading(true)
         try {
             const [transactionRes, budgetRes] = await Promise.all([
-                axios.get(`${API_URL}/transaction/allTransactions`),
-                axios.get(`${API_URL}/budget/getBudget/${month}`),
+                axios.get<{ transactions: Transaction[] }>(`${API_URL}/transaction/allTransactions`),
+                axios.get<{ budgets: BudgetItem[] }>(`${API_URL}/budget/getBudget/${month}`),
             ])
 
             setTransactions(transactionRes.data.transactions)
@@ -42,7 +58,7 @@ const Dashboard = () => {
     const totalBudget = budget?.budgets.reduce((acc, item) => acc + item.amount, 0) || 0
     const remainingBudget = totalBudget - totalExpenses
 
-    const categoryExpenses = transactions.reduce((acc, txn) => {
+    const categoryExpenses = transactions.reduce<{ [key: string]: number }>((acc, txn) => {
         acc[txn.category] = (acc[txn.category] || 0) + txn.amount
         return acc
     }, {})
@@ -162,4 +178,3 @@ const Dashboard = () => {
 }
 
 export default Dashboard
-

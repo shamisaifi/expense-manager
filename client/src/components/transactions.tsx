@@ -1,14 +1,26 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { API_URL } from "../config"
+import { API_URL } from "../config";
 
+interface Transaction {
+    _id: string;
+    date: string;
+    description: string;
+    category: string;
+    amount: number;
+}
 
 const Transactions = () => {
-    const [transactions, setTransactions] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [selectedTransaction, setSelectedTransaction] = useState(null);
-    const [formData, setFormData] = useState({ amount: "", description: "", date: "", category: "" });
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(true);
+    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+    const [formData, setFormData] = useState<{ amount: string; description: string; date: string; category: string }>({
+        amount: "",
+        description: "",
+        date: "",
+        category: "",
+    });
 
     useEffect(() => {
         fetchTransactions();
@@ -16,7 +28,7 @@ const Transactions = () => {
 
     const fetchTransactions = async () => {
         try {
-            const response = await axios.get(`${API_URL}/transaction/allTransactions?query=${searchQuery}`);
+            const response = await axios.get<{ transactions: Transaction[] }>(`${API_URL}/transaction/allTransactions?query=${searchQuery}`);
             setTransactions(response.data.transactions);
         } catch (error) {
             console.error("Error fetching transactions:", error);
@@ -25,23 +37,23 @@ const Transactions = () => {
         }
     };
 
-    const handleEditClick = (txn) => {
+    const handleEditClick = (txn: Transaction) => {
         setSelectedTransaction(txn);
         setFormData({
-            amount: txn.amount,
+            amount: txn.amount.toString(),
             description: txn.description,
             date: txn.date.split("T")[0],
             category: txn.category,
         });
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleUpdate = async () => {
         try {
-            await axios.put(`${API_URL}/transaction/edit-expense?id=${selectedTransaction._id}`, formData);
+            await axios.put(`${API_URL}/transaction/edit-expense?id=${selectedTransaction?._id}`, formData);
             alert("Transaction updated successfully!");
             fetchTransactions();
             setSelectedTransaction(null);
@@ -51,7 +63,7 @@ const Transactions = () => {
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id: string) => {
         try {
             await axios.delete(`${API_URL}/transaction/delete-expense/?id=${id}`);
             alert("Transaction deleted successfully!");
@@ -94,9 +106,7 @@ const Transactions = () => {
                                     <td className="p-3">{new Date(txn.date).toLocaleDateString()}</td>
                                     <td className="p-3">{txn.description}</td>
                                     <td className="p-3">
-                                        <span className="px-2 py-1 rounded bg-blue-200 text-blue-800 text-sm">
-                                            {txn.category}
-                                        </span>
+                                        <span className="px-2 py-1 rounded bg-blue-200 text-blue-800 text-sm">{txn.category}</span>
                                     </td>
                                     <td className="p-3 font-semibold">₹{txn.amount}</td>
                                     <td className="p-3">
@@ -158,8 +168,12 @@ const Transactions = () => {
                             <option value="Others">Others</option>
                         </select>
                         <div className="flex justify-end space-x-2">
-                            <button onClick={handleUpdate} className="bg-blue-600 text-white px-4 py-2 rounded">Update</button>
-                            <button onClick={() => setSelectedTransaction(null)} className="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
+                            <button onClick={handleUpdate} className="bg-blue-600 text-white px-4 py-2 rounded">
+                                Update
+                            </button>
+                            <button onClick={() => setSelectedTransaction(null)} className="bg-gray-400 text-white px-4 py-2 rounded">
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
