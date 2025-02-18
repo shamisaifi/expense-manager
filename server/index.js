@@ -5,13 +5,13 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: "./.env" });
 const app = express();
-app.use(express.json({ limit: "100mb" }));
+app.use(express.json());
 
 app.use(cors({
-    origin: "http://localhost:8000"
+    origin: "https://expense-manager-azfk.vercel.app"
 }));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const URL = process.env.MONGO_URL;
 
 mongoose.connect(URL)
