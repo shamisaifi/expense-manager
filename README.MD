@@ -5,6 +5,8 @@
 - **Database:** MongoDB (Mongoose ODM)
 - **API Handling:** Axios
 - **State Management:** React Hooks
+- **Graphs:** Recharts
+- **Icons:** lucide react
 
 ## 📦 Project Setup
 
